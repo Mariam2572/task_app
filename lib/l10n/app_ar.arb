@@ -1,0 +1,21 @@
+{
+    "app_title" :"قائمة المهام ",
+    "list" : "القائمة ",
+    "settings" : "الإعدادات",
+    "add_new_task": "إضافة مهمة جديدة",
+    "enter_task_title" : " إدخال عنوان المهمة",
+    "enter_task_details":" تفاصيل المهمة",
+    "select_date" : "تحديد الوقت ",
+    "validate_message1" : "من فضلك ادخل عنوان المهمة",
+    "validate_message2" : "من فضلك ادخل تفاصيل المهمة",
+    "task":"المهمة",
+    "language" :"اللغة",
+    "mode" : "النمط",
+    "arabic":"اللغة العربيه",
+    "english":"اللغة الإنجليزية",
+    "light_mode" :"نهاري",
+    "dark_mode":"ليلي"
+
+
+
+}

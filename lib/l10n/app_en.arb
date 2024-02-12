@@ -1,0 +1,19 @@
+{
+    "app_title":"ToDo List",
+    "list" : "List ",
+    "settings" : "Settings",
+    "add_new_task": "Add New Task",
+    "enter_task_title" : " Enter task title",
+    "enter_task_details":" Enter task description",
+    "select_date" : "Select Date ",
+    "validate_message1" : "Please enter task title",
+    "validate_message2" : "Please enter task details",
+    "task":"Task",
+    "language" :"Language",
+    "mode" : "Mode",
+    "arabic":"Arabic",
+    "english":"English",
+    "light_mode" :"Light mode",
+    "dark_mode":"Night mode"
+
+}
