@@ -3,51 +3,54 @@ import 'package:provider/provider.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeBottomSheet extends StatefulWidget {
-  const ThemeBottomSheet({super.key});
+class LanguageBottomSheet extends StatefulWidget {
+  const LanguageBottomSheet({super.key});
 
   @override
-  State<ThemeBottomSheet> createState() => _ThemeBottomSheetState();
+  State<LanguageBottomSheet> createState() => _LanguageBottomSheetState();
 }
 
-class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
+class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
 
     return Container(
-      margin: EdgeInsets.all(10),
+      height: MediaQuery.of(context).size.height * .28,
+      margin: const EdgeInsets.all(10),
       child: Column(
         children: [
           Container(
-            margin: EdgeInsets.all(15),
-            padding: EdgeInsets.all(15),
+            margin: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
                 color: MyTheme.primary,
                 borderRadius: BorderRadius.circular(20)),
             child: InkWell(
-                onTap: () {
-                  provider.changeTheme(ThemeMode.light);
+                onTap: () async{
+                 await provider.changeLanguage('ar');
+                
                 },
-                child: provider.isDark()
-                    ? getUnSelectedItem(AppLocalizations.of(context)!.light_mode)
-                    : getSelectedItem(AppLocalizations.of(context)!.light_mode)),
+                child: provider.appLanguage == 'ar'
+                    ? getSelectedItem(AppLocalizations.of(context)!.arabic)
+                    : getUnSelectedItem(AppLocalizations.of(context)!.arabic)),
           ),
           Container(
-              margin: EdgeInsets.all(15),
-              padding: EdgeInsets.all(15),
+              margin: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                   color: MyTheme.primary,
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
-                  onTap: () {
-                    provider.changeTheme(ThemeMode.dark);
+                  onTap: () async {
+                   await provider.changeLanguage('en');
                   },
-                  child: provider.isDark()
-                      ? getSelectedItem(AppLocalizations.of(context)!.dark_mode)
+                  child: provider.appLanguage == 'en'
+                      ? getSelectedItem(AppLocalizations.of(context)!.english)
                       : getUnSelectedItem(
-                          AppLocalizations.of(context)!.dark_mode)))
+                          AppLocalizations.of(context)!.english)))
         ],
       ),
     );
@@ -57,7 +60,7 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Text(text, style: Theme.of(context).textTheme.titleLarge),
       ImageIcon(
-        AssetImage('assets/images/icon_check.png'),
+        const AssetImage('assets/images/icon_check.png'),
         size: 35,
         color: MyTheme.whiteColor,
       ),

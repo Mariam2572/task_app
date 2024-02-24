@@ -41,6 +41,14 @@ dependencies:
   provider: ^6.1.1
   easy_date_timeline: ^1.0.3
   flutter_native_splash: ^2.3.7
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.14.0
+  awesome_dialog: ^3.1.0
+  get: ^4.6.6
+  flutter_slidable: ^3.0.1
+  shared_preferences: ^2.2.2
+  firebase_auth: ^4.16.0
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:

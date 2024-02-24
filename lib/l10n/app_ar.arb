@@ -14,7 +14,28 @@
     "arabic":"اللغة العربيه",
     "english":"اللغة الإنجليزية",
     "light_mode" :"نهاري",
-    "dark_mode":"ليلي"
+    "dark_mode":"ليلي",
+    "save_changes":"حفظ التغييرات",
+    "edit_task": " تعديل المهمة",
+    "create_account":"إنشاء حساب ",
+    "user_name":" اسم المستخدم ",
+    "e_mail":"البريد الإلكتروني ",
+    "password":" كلمة السر ",
+    "confirm_password":" تأكيد كلمة السر ",
+    "validate_user_name":"من فضلك ادخل اسم المستخدم",
+    "validate_mail":"من فضلك ادخل البريد الإلكتروني",
+    "validate_password":"من فضلك ادخل كلمة السر",
+    "validate_confirm_password":"من فضلك ادخل تأكيد كلمة السر",
+    "validate_mail_text":"يرجى إدخال بريد إلكتروني صالح",
+    "password_length": "أدخل كلمة مرور أقوى",
+    "password_match":"غير متوافق مع كلمة السر",
+    "login":"تسجيل دخول",
+    "or_create_account":"ليس لديك حساب ؟"
+
+
+
+
+
 
 
 

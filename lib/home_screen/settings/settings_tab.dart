@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:task_app/home_screen/settinge/language_bottom_shhet.dart';
-import 'package:task_app/home_screen/settinge/theme_bottom_sheet.dart';
+import 'package:task_app/home_screen/settings/language_bottom_shhet.dart';
+import 'package:task_app/home_screen/settings/theme_bottom_sheet.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/theme.dart';
 
@@ -47,7 +47,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   color:provider.isDark()?MyTheme.primary: MyTheme.blackLight
                 )),
-                Icon(Icons.arrow_drop_down ,size: 30,)
+                Icon(Icons.arrow_drop_down ,size: 35,color: MyTheme.primary,)
               ],
             ),
           ),
@@ -77,7 +77,7 @@ showThemeBottomSheet();            },
                 Text(AppLocalizations.of(context)!.mode,style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   color: provider.isDark()?MyTheme.primary: MyTheme.blackLight
                 )),
-                Icon(Icons.arrow_drop_down ,size: 30,)
+                Icon(Icons.arrow_drop_down ,size: 35,color: MyTheme.primary,)
               ],
             ),
           ),
@@ -88,13 +88,28 @@ showThemeBottomSheet();            },
   
   void showLanguageBottomSheet() {
     showModalBottomSheet(context: context,
+     shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: BorderSide(
+        color: MyTheme.primary
+      )
+    ),
      builder:(context) {
        return LanguageBottomSheet();
      }, );
   }
   
   void showThemeBottomSheet() {
-    showModalBottomSheet(context: context, builder: (context) {
+    showModalBottomSheet(context: context,
+
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: BorderSide(
+        color: MyTheme.primary
+      )
+    ),
+     builder: (context) {
+
       return ThemeBottomSheet();
     },);
   }

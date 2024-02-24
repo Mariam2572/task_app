@@ -14,6 +14,22 @@
     "arabic":"Arabic",
     "english":"English",
     "light_mode" :"Light mode",
-    "dark_mode":"Night mode"
+    "dark_mode":"Night mode",
+    "save_changes":"Save changes",
+    "edit_task": " Edit task",
+    "create_account":"Create Account",
+    "user_name":" User name ",
+    "e_mail":"E-mail ",
+    "password":" Password ",
+    "confirm_password":" Confirm password ",
+    "validate_user_name":"please enter User name",
+    "validate_mail":"please enter e-mail",
+    "validate_password":"please enter password",
+    "validate_confirm_password":"please enter confirm password",
+    "validate_mail_text":"please enter valid e-mail",
+    "password_length": "password should be at least 6 char",
+    "password_match":"Confirm password doesn't match password",
+    "login":"Login",
+    "or_create_account":"Or create account?"
 
 }
