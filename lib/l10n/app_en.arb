@@ -30,6 +30,7 @@
     "password_length": "password should be at least 6 char",
     "password_match":"Confirm password doesn't match password",
     "login":"Login",
-    "or_create_account":"Or create account?"
+    "or_create_account":"Or create account?",
+    "done":"Done !"
 
 }

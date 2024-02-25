@@ -5,13 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/home_screen/edit_task.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:task_app/model/task.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/theme.dart';
 
 class ItemTaskList extends StatefulWidget {
- bool click = true;
+  bool click = true;
   // static const String routeName = 'item task';
 
   Task task;
@@ -27,7 +28,7 @@ class _ItemTaskListState extends State<ItemTaskList> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
-bool? isdone = widget.task.isDone;
+    bool? isdone = widget.task.isDone;
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
@@ -84,7 +85,9 @@ bool? isdone = widget.task.isDone;
                   width: 4,
                   height: MediaQuery.of(context).size.height * .10,
                   decoration: BoxDecoration(
-                      color: (widget.click== false)? MyTheme.greenColor :MyTheme.primary,
+                      color: (widget.click == false)
+                          ? MyTheme.greenColor
+                          : MyTheme.primary,
                       borderRadius: BorderRadius.circular(10)),
                 ),
                 const SizedBox(
@@ -96,17 +99,19 @@ bool? isdone = widget.task.isDone;
                   children: [
                     Text(
                       widget.task.title ?? '',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith( color:(widget.click== false)? MyTheme.greenColor :MyTheme.primary),
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: (widget.click == false)
+                              ? MyTheme.greenColor
+                              : MyTheme.primary),
                     ),
                     Text(
                       widget.task.description ?? '',
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: (widget.click== false)? MyTheme.greenColor: provider.isDark()
-                              ? MyTheme.primary
-                              : MyTheme.blackLight),
+                          color: (widget.click == false)
+                              ? MyTheme.greenColor
+                              : provider.isDark()
+                                  ? MyTheme.primary
+                                  : MyTheme.blackLight),
                     ),
                     Row(children: [
                       Icon(
@@ -125,30 +130,30 @@ bool? isdone = widget.task.isDone;
                     ]),
                   ],
                 )),
-                widget.click== true?
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyTheme.primary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                       widget.click = !widget.click;
-                       isdone != isdone;
-                      });
-                     FirebaseUtils.taskDone(widget.task.id!, isdone!);
-                    
-                    },
-                    child: const ImageIcon(
-                      AssetImage('assets/images/icon_check.png'),
-                      size: 35,
-
-                    )
-                    )
-              : Text('Done !', style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,color: MyTheme.greenColor
-                ),)
+                widget.click == true
+                    ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyTheme.primary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            widget.click = !widget.click;
+                            isdone != isdone;
+                          });
+                          FirebaseUtils.taskDone(widget.task.id!, isdone!);
+                        },
+                        child: const ImageIcon(
+                          AssetImage('assets/images/icon_check.png'),
+                          size: 35,
+                        ))
+                    : Text(
+                        AppLocalizations.of(context)!.done,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: MyTheme.greenColor),
+                      )
               ],
             ),
           ),
@@ -156,6 +161,4 @@ bool? isdone = widget.task.isDone;
       ),
     );
   }
-
 }
- 

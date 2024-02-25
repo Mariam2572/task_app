@@ -30,7 +30,9 @@
     "password_length": "أدخل كلمة مرور أقوى",
     "password_match":"غير متوافق مع كلمة السر",
     "login":"تسجيل دخول",
-    "or_create_account":"ليس لديك حساب ؟"
+    "or_create_account":"ليس لديك حساب ؟",
+    "done":"لقد اتممت المهمة"
+
 
 
 
