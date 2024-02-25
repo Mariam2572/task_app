@@ -27,7 +27,7 @@ class _ItemTaskListState extends State<ItemTaskList> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
-
+bool? isdone = widget.task.isDone;
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
@@ -134,23 +134,10 @@ class _ItemTaskListState extends State<ItemTaskList> {
                     ),
                     onPressed: () {
                       setState(() {
-                       widget.click = false;
+                       widget.click = !widget.click;
+                       isdone != isdone;
                       });
-                      Future<void> doneTask() {
-                        // Task task = Task(
-                        //   title: widget.task.title,
-                        //   description: widget.task.description,
-                        //   dateTime: widget.task.dateTime,
-                        //   isDone: true);
-                        return FirebaseUtils.getTaskCollection()
-                                .doc(widget.task.id)
-                                .update({"isDone":widget.task.isDone=true}).timeout(
-                              const Duration(milliseconds: 100),
-                              onTimeout: () {
-                              //  provider.getAllTasksFromFireStore();
-                            },);
-                      }
-                      print('Done');//
+                     FirebaseUtils.taskDone(widget.task.id!, isdone!);
                     
                     },
                     child: const ImageIcon(

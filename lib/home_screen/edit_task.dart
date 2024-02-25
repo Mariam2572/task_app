@@ -34,8 +34,8 @@ class _EditTaskState extends State<EditTask> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Expanded(
-          child: Container(
+        child: Stack(
+          children:[ Container(
             padding: EdgeInsets.all(10),
             margin: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.06,
@@ -134,7 +134,7 @@ class _EditTaskState extends State<EditTask> {
               ],
             ),
           ),
-        ),
+       ] ),
       ),
     );
   }

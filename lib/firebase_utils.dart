@@ -27,8 +27,15 @@ return  getTaskCollection().doc(task.id).delete();
      return taskDocRef.set(task);
 
   
-  }  
+  } 
+  static Future<bool> taskDone(String id, bool isdone) async {
+                       
+await FirebaseUtils.getTaskCollection()
+        .doc(id)
+        .update({"isDone": isdone});
+        return true;
   
+}
 }
   //  var docRef= FirebaseFirestore.instance
   //       .collection(Task.collectionName)
