@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/home_screen/list_task/add_task_bottom_sheet.dart';
 import 'package:task_app/model/task.dart';
 import 'package:task_app/providers/app_config_provider.dart';
+import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 
 class EditTask extends StatefulWidget {
@@ -19,12 +17,13 @@ class EditTask extends StatefulWidget {
 
 class _EditTaskState extends State<EditTask> {
   var formKey = GlobalKey<FormState>();
+    DateTime newDate = provider.selectDate;
 
   @override
   Widget build(BuildContext context) {
     Task args = ModalRoute.of(context)?.settings.arguments as Task;
     var provider = Provider.of<AppConfigProvider>(context);
-    DateTime newDate = provider.selectDate;
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.18,
@@ -34,14 +33,14 @@ class _EditTaskState extends State<EditTask> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Stack(
-          children:[ Container(
-            padding: EdgeInsets.all(10),
+        child: Stack(children: [
+          Container(
+            padding: const EdgeInsets.all(10),
             margin: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.06,
                 horizontal: MediaQuery.of(context).size.width * 0.05),
             decoration: BoxDecoration(
-              color:provider.isDark()?MyTheme.blackDark: MyTheme.whiteColor,
+              color: provider.isDark() ? MyTheme.blackDark : MyTheme.whiteColor,
               borderRadius: BorderRadius.circular(15),
             ),
             child: Column(
@@ -60,30 +59,28 @@ class _EditTaskState extends State<EditTask> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(15.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: TextField(
                             decoration: InputDecoration(
                                 hintText: args.title,
                                 hintStyle: TextStyle(
                                     color: provider.isDark()
                                         ? MyTheme.whiteColor
-                                        : MyTheme.blackDark)
-                                        ),
+                                        : MyTheme.blackDark)),
                             onChanged: (text) {
                               args.title = text;
                             },
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(15.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: TextField(
                             decoration: InputDecoration(
                                 hintText: args.description,
                                 hintStyle: TextStyle(
                                     color: provider.isDark()
                                         ? MyTheme.whiteColor
-                                        : MyTheme.blackDark)
-                                        ),
+                                        : MyTheme.blackDark)),
                             onChanged: (text) {
                               args.description = text;
                             },
@@ -106,7 +103,7 @@ class _EditTaskState extends State<EditTask> {
                     showCalender();
                   },
                   child: Text(
-                    DateFormat('dd-MM-yyy ').format(newDate),
+                    DateFormat('dd-MM-yyy ').format(provider.selectDate),
                     style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                   ),
@@ -118,23 +115,25 @@ class _EditTaskState extends State<EditTask> {
                       horizontal: MediaQuery.of(context).size.width * 0.09),
                   child: ElevatedButton(
                     onPressed: () {
-                     
-                      Navigator.pop(context, args);
+                      saveChanges(){
+                        formKey.currentState!.save();
+                      }
+                      Navigator.pop(context);
                       setState(() {});
                     },
                     child: Text(AppLocalizations.of(context)!.save_changes),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 133, 181, 244),
+                      backgroundColor: const Color.fromARGB(255, 133, 181, 244),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                     ),
                   ),
                 )
               ],
             ),
           ),
-       ] ),
+        ]),
       ),
     );
   }
@@ -144,10 +143,14 @@ class _EditTaskState extends State<EditTask> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(Duration(days: 365)));
+        lastDate: DateTime.now().add(const Duration(days: 365)));
     if (chosenDate != null) {
-      selectedDate = chosenDate;
+      newDate = chosenDate;
     }
+    var authProvider = Provider.of<AuthProviders>(context ,listen: false);
+      provider.changeDate(newDate,
+       authProvider.currentUser!.id!);
+
 
     setState(() {});
   }
