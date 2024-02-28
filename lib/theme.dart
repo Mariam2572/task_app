@@ -44,6 +44,7 @@ class MyTheme {
   static ThemeData darkMode = ThemeData(
     appBarTheme: AppBarTheme(
       elevation: 0,
+      backgroundColor: primary
       
     ),
       bottomNavigationBarTheme:

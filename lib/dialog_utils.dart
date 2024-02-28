@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class DialogUtils {
   static void showLoading(BuildContext context, String message) {
@@ -30,12 +29,12 @@ class DialogUtils {
       Function? negAction}) {
     List<Widget> actins = [];
     if (posActionName != null) {
-      actins.add(ElevatedButton(
+      actins.add(TextButton(
           onPressed: () {
             if (posAction != null) {
               posAction.call();
             }
-            Navigator.pop(context);
+           //Navigator.pop(context);
           },
           child: Text(posActionName)));
     }

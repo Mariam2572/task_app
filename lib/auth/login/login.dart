@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/auth/custom_text_form_field.dart';
 import 'package:task_app/auth/register/register.dart';
 import 'package:task_app/dialog_utils.dart';
+import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/home_screen/home_screen.dart';
-import 'package:task_app/home_screen/list_task/add_task_bottom_sheet.dart';
-import 'package:task_app/providers/app_config_provider.dart';
+import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -19,11 +18,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController e_mailController = TextEditingController(text: 'mariam@gmail.com');
+  TextEditingController e_mailController =
+      TextEditingController(text: 'mariam@gmail.com');
 
-  TextEditingController passwordController = TextEditingController(text: '123456');
+  TextEditingController passwordController =
+      TextEditingController(text: '123456');
 
-var formKey = GlobalKey<FormState>();
+  var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ var formKey = GlobalKey<FormState>();
                             keyboardType: TextInputType.emailAddress,
                             controller: e_mailController,
                             validator: (text) {
-                              if (text == null || text.isEmpty) {
+                              if (text == null || text.trim().isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .validate_mail;
                               }
@@ -80,9 +81,10 @@ var formKey = GlobalKey<FormState>();
                             }),
                         CustomTextFormField(
                             label: AppLocalizations.of(context)!.password,
+                            obscureText: true,
                             controller: passwordController,
                             validator: (text) {
-                              if (text == null || text.isEmpty) {
+                              if (text == null || text.trim().isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .validate_password;
                               }
@@ -102,7 +104,10 @@ var formKey = GlobalKey<FormState>();
                     },
                     child: Text(
                       AppLocalizations.of(context)!.login,
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(color: MyTheme.whiteColor),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: MyTheme.whiteColor),
                     ),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MyTheme.primary,
@@ -117,10 +122,11 @@ var formKey = GlobalKey<FormState>();
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(RegisterScreen.routeName);
+                      Navigator.of(context).pushReplacementNamed(RegisterScreen.routeName);
                     },
-                    child:
-                        Text(AppLocalizations.of(context)!.or_create_account,))
+                    child: Text(
+                      AppLocalizations.of(context)!.or_create_account,
+                    ))
               ],
             ),
           ),
@@ -129,25 +135,45 @@ var formKey = GlobalKey<FormState>();
     );
   }
 
-  void login()async {
+  void login() async {
     if (formKey.currentState?.validate() == true) {
+     // show loading
+      DialogUtils.showLoading(context, 'Loading...');
       try {
-  final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: e_mailController.text,
-    password: passwordController.text
-  );
-  print('login successfully');
-  print(credential.user?.uid??"");
-DialogUtils.showMessage(context: context, message: 'login successfully');
-} on FirebaseAuthException catch (e) {
-  if (e.code == 'user-not-found') {
-    print('No user found for that email.');
-  } else if (e.code == 'wrong-password') {
-    print('Wrong password provided for that user.');
-  }
-}catch (e){
-  print(e.toString());
-}
+        final credential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+                ///بخزن يوزر في الفايربيز
+                email: e_mailController.text,
+                password: passwordController.text);
+                
+             // قبل ما اخفي اللودينج لازم اتأكد انه قرأ اليوزر من الفيربيز
+         var user = await FirebaseUtils.readUserFromFireStore(
+            credential.user?.uid ?? "");
+        if (user == null) {
+          return;
+        }
+         var authprovider = Provider.of<AuthProviders>(context, listen: false);
+            authprovider.changeUser(user);
+        // hide loading
+        DialogUtils.hideLoading(context);
+        print(credential.user?.uid ?? "");
+        DialogUtils.showMessage(
+          title: 'SUCCESS',
+            context: context, message: 'login successfully',
+            posActionName: 'oK',
+            posAction: (){
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+
+            });
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+        }
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
     var provider = Provider.of<AppConfigProvider>(context);
 
     return Container(
-      height: MediaQuery.of(context).size.height*.28,
+      height: MediaQuery.of(context).size.height * .28,
       // decoration: BoxDecoration(
       //   border: Border.all(
       //     color: MyTheme.primary
@@ -33,12 +33,15 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
                 color: MyTheme.primary,
                 borderRadius: BorderRadius.circular(20)),
             child: InkWell(
-                onTap: () async {
-                 await provider.changeTheme(ThemeMode.light);
+                onTap: ()  {
+                   provider.changeTheme(ThemeMode.light);
+                  Navigator.pop(context);
                 },
                 child: provider.isDark()
-                    ? getUnSelectedItem(AppLocalizations.of(context)!.light_mode)
-                    : getSelectedItem(AppLocalizations.of(context)!.light_mode)),
+                    ? getUnSelectedItem(
+                        AppLocalizations.of(context)!.light_mode)
+                    : getSelectedItem(
+                        AppLocalizations.of(context)!.light_mode)),
           ),
           Container(
               margin: EdgeInsets.all(15),
@@ -47,8 +50,9 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
                   color: MyTheme.primary,
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
-                  onTap: () async {
-                   await provider.changeTheme(ThemeMode.dark);
+                  onTap: ()  {
+                     provider.changeTheme(ThemeMode.dark);
+                    Navigator.pop(context);
                   },
                   child: provider.isDark()
                       ? getSelectedItem(AppLocalizations.of(context)!.dark_mode)

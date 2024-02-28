@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:task_app/dialog_utils.dart';
 import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/home_screen/edit_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:task_app/model/task.dart';
 import 'package:task_app/providers/app_config_provider.dart';
+import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 
 class ItemTaskList extends StatefulWidget {
@@ -28,45 +30,39 @@ class _ItemTaskListState extends State<ItemTaskList> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
+    var authProvider = Provider.of<AuthProviders>(context);
+
     bool? isdone = widget.task.isDone;
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
-        // The start action pane is the one at the left or the top side.
+        key: Key(authProvider.currentUser!.id!),
         startActionPane: ActionPane(
-          extentRatio: .20,
-          // A motion is a widget used to control how the pane animates.
-          motion: const ScrollMotion(),
-          dismissible: DismissiblePane(onDismissed: () {}),
-          children: [
-            // A SlidableAction can have an icon and/or a label.
-            SlidableAction(
-              onPressed: (context) {
-                FirebaseUtils.deleteTaskFromFireStore(widget.task).timeout(
-                  Duration(milliseconds: 100),
-                  onTimeout: () {
-                    provider.getAllTasksFromFireStore();
-                  },
-                );
-              },
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  bottomLeft: Radius.circular(25),
-                  topRight: Radius.circular(5),
-                  bottomRight: Radius.circular(5)),
-
-              //padding: EdgeInsets.all(8),
-              backgroundColor: MyTheme.redColor,
-              foregroundColor: MyTheme.whiteColor,
-              icon: Icons.delete,
-              label: 'Delete',
-            ),
-          ],
-        ),
-        endActionPane: const ActionPane(
-          motion: ScrollMotion(),
-          children: [],
-        ),
+            extentRatio: .25,
+            motion:  ScrollMotion(),
+            dismissible: DismissiblePane(onDismissed: () {}),
+            children: [
+              SlidableAction(
+                onPressed: (context) => {
+                  FirebaseUtils.deleteTaskFromFireStore(
+                          widget.task, authProvider.currentUser!.id!)
+                      .then((value) {
+                    print('task deleted successfully');
+                    provider.getAllTasksFromFireStore(
+                        authProvider.currentUser!.id!);
+                  })
+                },
+                backgroundColor: MyTheme.redColor,
+                foregroundColor: MyTheme.whiteColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(5),
+                    topRight: Radius.circular(5)),
+                icon: Icons.delete,
+                label: 'Delete',
+              )
+            ]),
         child: InkWell(
           onTap: () {
             Navigator.pushNamed(context, EditTask.routeName,
@@ -140,9 +136,14 @@ class _ItemTaskListState extends State<ItemTaskList> {
                         onPressed: () {
                           setState(() {
                             widget.click = !widget.click;
-                            isdone != isdone;
+                            // isdone != isdone;
                           });
-                          FirebaseUtils.taskDone(widget.task.id!, isdone!);
+                          Task task = Task(
+                              title: widget.task.title,
+                              description: widget.task.description,
+                              dateTime: widget.task.dateTime,
+                              isDone: true);
+                          FirebaseUtils.updateTasks(task.id!, task);
                         },
                         child: const ImageIcon(
                           AssetImage('assets/images/icon_check.png'),

@@ -1,42 +1,69 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:task_app/model/my_user.dart';
 import 'package:task_app/model/task.dart';
 
 class FirebaseUtils {
-  static CollectionReference<Task> getTaskCollection() {
-    return FirebaseFirestore.instance
+  static CollectionReference<Task> getTaskCollection(String uId) {
+    return getUsersCollection().doc(uId)
         .collection(Task.collectionName)
         .withConverter<Task>(
           fromFirestore: (snapshot, options) => Task.fromJson(snapshot.data()!),
           toFirestore: (task, options) => task.toJson(),
         );
   }
-static void updateTask(Task task){
-  getTaskCollection().doc(task.id).update
+static void updateTask(Task task, String uId){
+  getTaskCollection(uId).doc(task.id).update
   ({'title' : task.title ,'description': task.description,'dateTime' :task.dateTime });
 }
- static Future<void>  deleteTaskFromFireStore(Task task){
-return  getTaskCollection().doc(task.id).delete();
+ 
+ static Future<void>  deleteTaskFromFireStore(Task task ,String uId){
+ return  getTaskCollection(uId).doc(task.id).delete();
  }
-//  static void editTaskFromFireStore(Task task){
-//   getTaskCollection().doc(task.id).update(data)
-//  }
-  static Future<void> addTaskToFirebase(Task task) {
-    var taskCollectionRef = getTaskCollection(); // collection
+
+  static Future<void> addTaskToFirebase(Task task , String uId) {
+    var taskCollectionRef = getTaskCollection(uId); // collection
     DocumentReference<Task> taskDocRef = taskCollectionRef.doc();  // Document
     task.id = taskDocRef.id;  // auto generate id
      return taskDocRef.set(task);
 
   
   } 
-  static Future<bool> taskDone(String id, bool isdone) async {
-                       
-await FirebaseUtils.getTaskCollection()
-        .doc(id)
-        .update({"isDone": isdone});
-        return true;
   
+  static Future<void> taskDone(Task task , String uId) async {
+                       
+       await FirebaseUtils.getTaskCollection(uId)
+        .doc(task.id)
+        .update({"isDone": task.isDone});
+       
 }
+  static Future<void> updateTasks(String uId, Task updateTasks) {
+    return getTaskCollection(uId).doc(uId).update(updateTasks.toJson());
+  }
+  static CollectionReference<MyUser> getUsersCollection (){
+    return FirebaseFirestore.instance.collection(MyUser.collectionName).withConverter<MyUser>(
+      fromFirestore: (snapshot, options) => MyUser.fromFirestore(snapshot.data()),
+     toFirestore: (user, _) => user.toFirestore(),);
+  }
+  static Future<void> addUsersToFireStore(MyUser myUser){
+    return getUsersCollection().doc(myUser.id).set(myUser);
+  }
+
+  static Future<MyUser?> readUserFromFireStore( String uId) async {
+   DocumentSnapshot<MyUser> querySnapShot = await getUsersCollection().doc(uId).get();
+   return querySnapShot.data();
+
+  }
 }
+
+
+
+
+
+
+
+
+
+
   //  var docRef= FirebaseFirestore.instance
   //       .collection(Task.collectionName)
   //       .withConverter<Task>(

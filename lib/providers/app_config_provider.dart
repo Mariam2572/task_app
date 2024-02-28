@@ -8,9 +8,9 @@ class AppConfigProvider extends ChangeNotifier {
   // الداتا اللي لما هتتغير هتأثر على أكتر من ويدجت
   List<Task> tasksList = [];
   DateTime selectDate = DateTime.now();
-  void getAllTasksFromFireStore() async {
+  void getAllTasksFromFireStore(String uId) async {
     QuerySnapshot<Task> querySnapshot =
-        await FirebaseUtils.getTaskCollection().get();
+        await FirebaseUtils.getTaskCollection(uId).get();
     //  List<QueryDocumentSnapshot<Task>> //doc اللي شايله التاسكات=> List<Task>
     tasksList = querySnapshot.docs.map((doc) => doc.data()).toList();
 // filter all tasks
@@ -36,10 +36,10 @@ class AppConfigProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeDate(DateTime newDate) {
+  void changeDate(DateTime newDate , String uId) {
     selectDate = newDate;
     // refresh tasks after filter date
-    getAllTasksFromFireStore();
+    getAllTasksFromFireStore(uId);
     //removed to improve performance
     // notifyListeners();
   }
@@ -68,11 +68,11 @@ class AppConfigProvider extends ChangeNotifier {
   Future<void> loadSettings() async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         String? newTheme = prefs.getString("newTheme");
-        String? newLanguage = prefs.getString("newLanguage");
+        //String? newLanguage = prefs.getString("newLanguage");
        newTheme ??="light"; 
        appTheme =( newTheme == "dark" ? ThemeMode.dark : ThemeMode.light);
-       newLanguage ??= "en";
-        appLanguage = newLanguage;
+      //  newLanguage ??= "en";
+      //   appLanguage = newLanguage;
         notifyListeners();
 
   }

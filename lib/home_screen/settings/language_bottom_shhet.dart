@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageBottomSheet extends StatefulWidget {
   const LanguageBottomSheet({super.key});
@@ -29,13 +28,14 @@ class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 color: MyTheme.primary,
                 borderRadius: BorderRadius.circular(20)),
             child: InkWell(
-                onTap: () async{
-                 await provider.changeLanguage('ar');
-                
-                },
-                child: provider.appLanguage == 'ar'
-                    ? getSelectedItem(AppLocalizations.of(context)!.arabic)
-                    : getUnSelectedItem(AppLocalizations.of(context)!.arabic)),
+              onTap: () async {
+                await provider.changeLanguage('ar');
+                Navigator.pop(context);
+              },
+              child: provider.appLanguage == 'ar'
+                  ? getSelectedItem(AppLocalizations.of(context)!.arabic)
+                  : getUnSelectedItem(AppLocalizations.of(context)!.arabic),
+            ),
           ),
           Container(
               margin: const EdgeInsets.all(15),
@@ -45,7 +45,8 @@ class _LanguageBottomSheetState extends State<LanguageBottomSheet> {
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
                   onTap: () async {
-                   await provider.changeLanguage('en');
+                    await provider.changeLanguage('en');
+                    Navigator.pop(context);
                   },
                   child: provider.appLanguage == 'en'
                       ? getSelectedItem(AppLocalizations.of(context)!.english)

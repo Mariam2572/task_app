@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:task_app/dialog_utils.dart';
 import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/model/task.dart';
 import 'package:task_app/providers/app_config_provider.dart';
+import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
@@ -26,6 +26,7 @@ late AppConfigProvider provider;
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   @override
   Widget build(BuildContext context) {
+
      provider = Provider.of<AppConfigProvider>(context);
 
 return Container(
@@ -159,11 +160,26 @@ return Container(
       /// add task
       Task task =
           Task(title: title, description: details, dateTime: selectedDate);
-      FirebaseUtils.addTaskToFirebase(task).timeout(Duration(milliseconds: 300),
+               var authProvider =Provider.of<AuthProviders>(context,listen: false);
+
+      FirebaseUtils.addTaskToFirebase(task,authProvider.currentUser!.id!).then((value) {
+         {
+            provider.getAllTasksFromFireStore(authProvider.currentUser!.id!);
+    AwesomeDialog(
+    context: context,
+    title: 'Success',
+    desc: 'Task added successfully',
+    dialogType: DialogType.success,
+    animType: AnimType.topSlide,
+    showCloseIcon: true,
+    btnOkOnPress: () {},
+    ).show();
+     }
+      }).timeout(Duration(milliseconds: 500),
       // refresh tasks
     
           onTimeout: () {
-            provider.getAllTasksFromFireStore();
+            provider.getAllTasksFromFireStore(authProvider.currentUser!.id!);
     AwesomeDialog(
     context: context,
     title: 'Success',

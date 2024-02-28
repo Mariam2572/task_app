@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/auth/custom_text_form_field.dart';
 import 'package:task_app/dialog_utils.dart';
+import 'package:task_app/firebase_utils.dart';
 import 'package:task_app/home_screen/home_screen.dart';
-import 'package:task_app/home_screen/list_task/add_task_bottom_sheet.dart';
-import 'package:task_app/providers/app_config_provider.dart';
+import 'package:task_app/model/my_user.dart';
+import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -21,7 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController nameController = TextEditingController(text: 'Mariam');
 
-  TextEditingController e_mailController =
+  TextEditingController emailController =
       TextEditingController(text: 'mariam@gmail.com');
 
   TextEditingController passwordController =
@@ -29,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController confirmPasswordController =
       TextEditingController(text: '123456');
-    var form = GlobalKey<FormState>();
+  var form = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           label: AppLocalizations.of(context)!.user_name,
                           controller: nameController,
                           validator: (text) {
-                            if (text == null || text.isEmpty) {
+                            if (text == null || text.trim().isEmpty) {
                               return AppLocalizations.of(context)!
                                   .validate_user_name;
                             }
@@ -80,15 +81,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         CustomTextFormField(
                             label: AppLocalizations.of(context)!.e_mail,
                             keyboardType: TextInputType.emailAddress,
-                            controller: e_mailController,
+                            controller: emailController,
                             validator: (text) {
-                              if (text == null || text.isEmpty) {
+                              if (text == null || text.trim().isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .validate_mail;
                               }
                               bool emailValid = RegExp(
                                       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(e_mailController.text);
+                                  .hasMatch(emailController.text);
                               if (!emailValid) {
                                 return AppLocalizations.of(context)!
                                     .validate_mail_text;
@@ -96,10 +97,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return null;
                             }),
                         CustomTextFormField(
+                            obscureText: true,
                             label: AppLocalizations.of(context)!.password,
                             controller: passwordController,
                             validator: (text) {
-                              if (text == null || text.isEmpty) {
+                              if (text == null || text.trim().isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .validate_password;
                               }
@@ -110,11 +112,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return null;
                             }),
                         CustomTextFormField(
+                            obscureText: true,
                             label:
                                 AppLocalizations.of(context)!.confirm_password,
                             controller: confirmPasswordController,
                             validator: (text) {
-                              if (text == null || text.isEmpty) {
+                              if (text == null || text.trim().isEmpty) {
                                 return AppLocalizations.of(context)!
                                     .validate_confirm_password;
                               }
@@ -150,11 +153,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         )),
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, HomeScreen.routeName);
-                    },
-                    child: Text('back'))
               ],
             ),
           ),
@@ -170,14 +168,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // todo: show loading
         final credential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: e_mailController.text,
+          email: emailController.text,
           password: passwordController.text,
         );
-        DialogUtils.hideLoading(context);
+        MyUser myUser = MyUser(
+            id: credential.user?.uid ?? "",
+            name: nameController.text,
+            email: emailController.text);
+        var authprovider = Provider.of<AuthProviders>(context, listen: false);
+        authprovider.changeUser(myUser);
+        await FirebaseUtils.addUsersToFireStore(myUser);
         // todo: hide loading
-        DialogUtils.showMessage(
-            context: context, message: "Register successfully");
+
+        DialogUtils.hideLoading(context);
         // todo: show message
+
+        DialogUtils.showMessage(
+            context: context,
+            message: "Register successfully",
+            posActionName: 'Ok',
+            title: 'Success',
+            posAction: () {
+
+ Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+            builder: (context) => HomeScreen()));         
+               });
         print('Register successfully');
         print(credential.user?.uid ?? "");
       } on FirebaseAuthException catch (e) {
@@ -206,6 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // todo: show message
         DialogUtils.showMessage(
           context: context,
+          title: "Error",
           message: '${e.toString()}',
         );
         print(e);
