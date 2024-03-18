@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:task_app/auth/custom_text_form_field.dart';
 import 'package:task_app/dialog_utils.dart';
 import 'package:task_app/firebase_utils.dart';
-import 'package:task_app/home_screen/home_screen.dart';
+import 'package:task_app/home/home_screen.dart';
 import 'package:task_app/model/my_user.dart';
 import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
@@ -189,11 +189,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             posActionName: 'Ok',
             title: 'Success',
             posAction: () {
-
- Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-            builder: (context) => HomeScreen()));         
-               });
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
+            });
         print('Register successfully');
         print(credential.user?.uid ?? "");
       } on FirebaseAuthException catch (e) {

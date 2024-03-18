@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:task_app/home_screen/list_task/add_task_bottom_sheet.dart';
+import 'package:task_app/firebase_utils.dart';
+import 'package:task_app/home/list_task/add_task_bottom_sheet.dart';
 import 'package:task_app/model/task.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/providers/auth_provider.dart';
@@ -11,18 +12,26 @@ import 'package:task_app/theme.dart';
 class EditTask extends StatefulWidget {
   static const String routeName = ' Edit task';
 
+final Task task;
+
+  const EditTask({super.key, required this.task});
+
   @override
   State<EditTask> createState() => _EditTaskState();
 }
 
 class _EditTaskState extends State<EditTask> {
-  var formKey = GlobalKey<FormState>();
-    DateTime newDate = provider.selectDate;
-
+  TextEditingController titleController =TextEditingController();
+  TextEditingController descriptionController =TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    titleController.text=widget.task.title!;
+    descriptionController.text = widget.task.description!;
+  }
   @override
   Widget build(BuildContext context) {
-    Task args = ModalRoute.of(context)?.settings.arguments as Task;
-    var provider = Provider.of<AppConfigProvider>(context);
+                 var provider = Provider.of<AppConfigProvider>(context,listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,40 +63,30 @@ class _EditTaskState extends State<EditTask> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                hintText: args.title,
-                                hintStyle: TextStyle(
-                                    color: provider.isDark()
-                                        ? MyTheme.whiteColor
-                                        : MyTheme.blackDark)),
-                            onChanged: (text) {
-                              args.title = text;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                hintText: args.description,
-                                hintStyle: TextStyle(
-                                    color: provider.isDark()
-                                        ? MyTheme.whiteColor
-                                        : MyTheme.blackDark)),
-                            onChanged: (text) {
-                              args.description = text;
-                            },
-                          ),
-                        ),
-                      ],
-                    )),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          titleController.text =value;
+                        },
+                        controller: titleController,
+                        decoration: InputDecoration(),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                         onChanged: (value) {
+                          descriptionController.text =value;
+                        },
+                        controller:descriptionController ,
+                        decoration: InputDecoration(),
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Text(
@@ -114,12 +113,9 @@ class _EditTaskState extends State<EditTask> {
                       vertical: MediaQuery.of(context).size.height * 0.11,
                       horizontal: MediaQuery.of(context).size.width * 0.09),
                   child: ElevatedButton(
-                    onPressed: () {
-                      saveChanges(){
-                        formKey.currentState!.save();
-                      }
-                      Navigator.pop(context);
-                      setState(() {});
+                    onPressed: ()  {
+                      FirebaseUtils.updateTask(widget.task, widget.task.id!);
+                     if(mounted) Navigator.pop(context);
                     },
                     child: Text(AppLocalizations.of(context)!.save_changes),
                     style: ElevatedButton.styleFrom(
@@ -144,14 +140,9 @@ class _EditTaskState extends State<EditTask> {
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(const Duration(days: 365)));
-    if (chosenDate != null) {
-      newDate = chosenDate;
-    }
-    var authProvider = Provider.of<AuthProviders>(context ,listen: false);
-      provider.changeDate(newDate,
-       authProvider.currentUser!.id!);
-
-
-    setState(() {});
+    // if (chosenDate != null) {
+    //   widget.newDate = chosenDate;
+    // } 
+   
   }
-}
+  }

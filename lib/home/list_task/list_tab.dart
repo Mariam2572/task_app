@@ -1,8 +1,7 @@
-
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:task_app/home_screen/list_task/item_task_list.dart';
+import 'package:task_app/home/list_task/item_task_list.dart';
 import 'package:task_app/providers/app_config_provider.dart';
 import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
@@ -15,7 +14,7 @@ class TaskList extends StatefulWidget {
 class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
-    var authProvider =Provider.of<AuthProviders>(context);
+    var authProvider = Provider.of<AuthProviders>(context);
     var provider = Provider.of<AppConfigProvider>(context);
     if (provider.tasksList.isEmpty) {
       provider.getAllTasksFromFireStore(authProvider.currentUser!.id!);

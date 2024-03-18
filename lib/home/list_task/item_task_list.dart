@@ -1,11 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/dialog_utils.dart';
 import 'package:task_app/firebase_utils.dart';
-import 'package:task_app/home_screen/edit_task.dart';
+import 'package:task_app/home/edit_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:task_app/model/task.dart';
@@ -32,41 +33,39 @@ class _ItemTaskListState extends State<ItemTaskList> {
     var provider = Provider.of<AppConfigProvider>(context);
     var authProvider = Provider.of<AuthProviders>(context);
 
-    bool? isdone = widget.task.isDone;
+    bool isdone = widget.task.isDone!;
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
-        key: Key(authProvider.currentUser!.id!),
-        startActionPane: ActionPane(
-            extentRatio: .25,
-            motion:  ScrollMotion(),
-            dismissible: DismissiblePane(onDismissed: () {}),
-            children: [
-              SlidableAction(
-                onPressed: (context) => {
-                  FirebaseUtils.deleteTaskFromFireStore(
-                          widget.task, authProvider.currentUser!.id!)
-                      .then((value) {
-                    print('task deleted successfully');
-                    provider.getAllTasksFromFireStore(
-                        authProvider.currentUser!.id!);
-                  })
-                },
-                backgroundColor: MyTheme.redColor,
-                foregroundColor: MyTheme.whiteColor,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(5),
-                    topRight: Radius.circular(5)),
-                icon: Icons.delete,
-                label: 'Delete',
-              )
-            ]),
+        key: UniqueKey(),
+        startActionPane:
+            ActionPane(extentRatio: .25, motion: ScrollMotion(), children: [
+          SlidableAction(
+            onPressed: (context) => {
+              FirebaseUtils.deleteTaskFromFireStore(
+                      widget.task, authProvider.currentUser!.id!)
+                  .then((value) {
+                print('task deleted successfully');
+                provider
+                    .getAllTasksFromFireStore(authProvider.currentUser!.id!);
+              })
+            },
+            backgroundColor: MyTheme.redColor,
+            foregroundColor: MyTheme.whiteColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(5),
+                topRight: Radius.circular(5)),
+            icon: Icons.delete,
+            label: 'Delete',
+          )
+        ]),
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, EditTask.routeName,
-                arguments: widget.task);
+              Navigator.of(context).
+              push(CupertinoPageRoute(builder: (context) => EditTask(task: widget.task),));
+                    
           },
           child: Container(
             padding: const EdgeInsets.all(10),
@@ -136,14 +135,10 @@ class _ItemTaskListState extends State<ItemTaskList> {
                         onPressed: () {
                           setState(() {
                             widget.click = !widget.click;
-                            // isdone != isdone;
                           });
-                          Task task = Task(
-                              title: widget.task.title,
-                              description: widget.task.description,
-                              dateTime: widget.task.dateTime,
-                              isDone: true);
-                          FirebaseUtils.updateTasks(task.id!, task);
+                         if(widget.task.isDone == true) return;
+                         widget.task.isDone = true;
+                         FirebaseUtils.updateTask(widget.task, widget.task.id!);
                         },
                         child: const ImageIcon(
                           AssetImage('assets/images/icon_check.png'),

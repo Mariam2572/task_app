@@ -33,8 +33,8 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
                 color: MyTheme.primary,
                 borderRadius: BorderRadius.circular(20)),
             child: InkWell(
-                onTap: ()  {
-                   provider.changeTheme(ThemeMode.light);
+                onTap: () {
+                  provider.changeTheme(ThemeMode.light);
                   Navigator.pop(context);
                 },
                 child: provider.isDark()
@@ -50,8 +50,8 @@ class _ThemeBottomSheetState extends State<ThemeBottomSheet> {
                   color: MyTheme.primary,
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
-                  onTap: ()  {
-                     provider.changeTheme(ThemeMode.dark);
+                  onTap: () {
+                    provider.changeTheme(ThemeMode.dark);
                     Navigator.pop(context);
                   },
                   child: provider.isDark()

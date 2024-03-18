@@ -5,7 +5,7 @@ import 'package:task_app/auth/custom_text_form_field.dart';
 import 'package:task_app/auth/register/register.dart';
 import 'package:task_app/dialog_utils.dart';
 import 'package:task_app/firebase_utils.dart';
-import 'package:task_app/home_screen/home_screen.dart';
+import 'package:task_app/home/home_screen.dart';
 import 'package:task_app/providers/auth_provider.dart';
 import 'package:task_app/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -122,7 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushReplacementNamed(RegisterScreen.routeName);
+                      Navigator.of(context)
+                          .pushReplacementNamed(RegisterScreen.routeName);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.or_create_account,
@@ -137,33 +138,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void login() async {
     if (formKey.currentState?.validate() == true) {
-     // show loading
+      // show loading
       DialogUtils.showLoading(context, 'Loading...');
       try {
         final credential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
+
                 ///بخزن يوزر في الفايربيز
                 email: e_mailController.text,
                 password: passwordController.text);
-                
-             // قبل ما اخفي اللودينج لازم اتأكد انه قرأ اليوزر من الفيربيز
-         var user = await FirebaseUtils.readUserFromFireStore(
+
+        // قبل ما اخفي اللودينج لازم اتأكد انه قرأ اليوزر من الفيربيز
+        var user = await FirebaseUtils.readUserFromFireStore(
             credential.user?.uid ?? "");
         if (user == null) {
           return;
         }
-         var authprovider = Provider.of<AuthProviders>(context, listen: false);
-            authprovider.changeUser(user);
+        var authprovider = Provider.of<AuthProviders>(context, listen: false);
+        authprovider.changeUser(user);
         // hide loading
         DialogUtils.hideLoading(context);
         print(credential.user?.uid ?? "");
         DialogUtils.showMessage(
-          title: 'SUCCESS',
-            context: context, message: 'login successfully',
+            title: 'SUCCESS',
+            context: context,
+            message: 'login successfully',
             posActionName: 'oK',
-            posAction: (){
+            posAction: () {
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-
             });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
